@@ -1,0 +1,77 @@
+# ===================================================================
+# 编译和构建产物 (Compiled and Build Output)
+# 这些是根据源代码自动生成的文件，不应该被版本控制。
+# 每个人都可以通过构建命令（如 mvn package）自己生成。
+# ===================================================================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+build/
+dist/
+
+
+# ===================================================================
+# Maven Wrapper 二进制文件 (Maven Wrapper Binary)
+# .mvn/wrapper/maven-wrapper.properties 是配置文件，应该被版本控制。
+# .mvn/wrapper/maven-wrapper.jar 是二进制的jar包，体积大且可以自动下载，不应提交。
+# ===================================================================
+.mvn/wrapper/maven-wrapper.jar
+
+
+# ===================================================================
+# 日志和运行时文件 (Logs and Runtime Files)
+# 日志文件会不断变化且与个人运行环境相关。
+# ===================================================================
+*.log
+logs/
+
+
+# ===================================================================
+# 特定于IDE的配置文件 (IDE-specific Configuration)
+# 这些文件包含了个人开发环境的设置（如窗口布局、本地历史等），
+# 团队成员之间不应共享。
+# ===================================================================
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+*.ipr
+# IntelliJ的额外工作区文件
+out/
+
+### VS Code ###
+.vscode/
+# VS Code 本地历史记录
+.history/
+
+### Eclipse / STS ###
+.classpath
+.project
+.settings/
+.apt_generated
+.factorypath
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+
+# ===================================================================
+# 操作系统生成的文件 (OS-generated Files)
+# ===================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
