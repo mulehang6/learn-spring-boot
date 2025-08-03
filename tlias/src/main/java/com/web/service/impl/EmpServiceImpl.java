@@ -2,17 +2,15 @@ package com.web.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.web.entity.Emp;
-import com.web.entity.EmpExpr;
-import com.web.entity.EmpQueryParam;
-import com.web.entity.PageResult;
+import com.web.entity.*;
 import com.web.mapper.EmpExprMapper;
 import com.web.mapper.EmpMapper;
+import com.web.service.EmpLogService;
 import com.web.service.EmpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,6 +23,9 @@ public class EmpServiceImpl implements EmpService {
 
     @Autowired
     private EmpExprMapper empExprMapper;
+
+    @Autowired
+    private EmpLogService empLogService;
 
     /*@Override
     public PageResult<Emp> pageSelect(Integer page, Integer pageSize) {
@@ -61,24 +62,32 @@ public class EmpServiceImpl implements EmpService {
 
         //封装到PageResult
         Page<Emp> emps = (Page<Emp>) rows;
-        return new PageResult<Emp>(emps.getTotal(),emps.getResult());
+        return new PageResult<>(emps.getTotal(),emps.getResult());
     }
 
+    @Transactional(rollbackFor = {Exception.class}) // 默认RunTimeException回滚
     @Override
     public void addEmp(Emp emp) {
-        //封装到emp
-        emp.setCreateTime(LocalDateTime.now());
-        emp.setUpdateTime(LocalDateTime.now());
-        empMapper.addEmp(emp);
+        try {
+            //封装到emp
+            emp.setCreateTime(LocalDateTime.now());
+            emp.setUpdateTime(LocalDateTime.now());
+            empMapper.addEmp(emp);
 
-        //封装到empExpr
-        List<EmpExpr> empExprs = emp.getExprList();
-        if(!empExprs.isEmpty()) {
-            //遍历集合，为deptId赋值
-            empExprs.forEach(expr -> {
-                expr.setEmpId(emp.getId());
-            });
-            empExprMapper.addExprs(empExprs);
+
+            //封装到empExpr
+            List<EmpExpr> empExprs = emp.getExprList();
+            if(!empExprs.isEmpty()) {
+                //遍历集合，为deptId赋值
+                empExprs.forEach(expr -> {
+                    expr.setEmpId(emp.getId());
+                });
+                empExprMapper.addExprs(empExprs);
+            }
+        } finally {
+            // 记录日志
+            EmpLog empLog = new EmpLog(null,LocalDateTime.now(),"信息: " + emp);
+            empLogService.insertLog(empLog);
         }
     }
 }
