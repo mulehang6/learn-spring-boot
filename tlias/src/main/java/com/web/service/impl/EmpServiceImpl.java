@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -52,6 +54,7 @@ public class EmpServiceImpl implements EmpService {
         return new PageResult<Emp>(emps.getTotal(),emps.getResult());
     }*/
 
+    //分页查询
     @Override
     public PageResult<Emp> pageSelect(EmpQueryParam empQueryParam) {
         //调用mapper接口，查询总记录数
@@ -65,6 +68,7 @@ public class EmpServiceImpl implements EmpService {
         return new PageResult<>(emps.getTotal(),emps.getResult());
     }
 
+    //添加员工
     @Transactional(rollbackFor = {Exception.class}) // 默认RunTimeException回滚
     @Override
     public void addEmp(Emp emp) {
@@ -88,6 +92,39 @@ public class EmpServiceImpl implements EmpService {
             // 记录日志
             EmpLog empLog = new EmpLog(null,LocalDateTime.now(),"信息: " + emp);
             empLogService.insertLog(empLog);
+        }
+    }
+
+    //批量删除员工
+    @Transactional(rollbackFor = {Exception.class})
+    @Override
+    public void delete(List<Integer> ids) {
+        empMapper.delete(ids);
+        empExprMapper.delete(ids);
+    }
+
+    @Override
+    public Emp getById(Integer id) {
+        return empMapper.getById(id);
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    @Override
+    public void update(Emp emp) {
+        // 1. 更新员工基本信息
+        emp.setUpdateTime(LocalDateTime.now());
+        empMapper.update(emp);
+
+        //2-1 先删除工作信息
+        empExprMapper.delete(Collections.singletonList(emp.getId()));
+
+        //2-2 再添加工作信息
+        List<EmpExpr> empExprList = emp.getExprList();
+        if(!empExprList.isEmpty()) {
+            empExprList.forEach(empExpr -> {
+                empExpr.setEmpId(emp.getId());
+            });
+            empExprMapper.addExprs(empExprList);
         }
     }
 }

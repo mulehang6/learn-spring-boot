@@ -2,10 +2,7 @@ package com.web.mapper;
 
 import com.web.entity.Emp;
 import com.web.entity.EmpQueryParam;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -33,4 +30,12 @@ public interface EmpMapper {
     @Insert("insert into emp(username, name, gender, phone, job, salary, image, entry_date, dept_id, create_time, update_time) " +
             "values (#{username},#{name},#{gender},#{phone},#{job},#{salary},#{image},#{entryDate},#{deptId},#{createTime},#{updateTime})")
     void addEmp(Emp emp);
+
+
+    void delete(List<Integer> ids);
+
+    Emp getById(Integer id);
+
+
+    void update(Emp emp);
 }

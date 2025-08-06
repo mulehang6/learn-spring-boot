@@ -1,20 +1,28 @@
 package com.web.controller;
 
 import com.web.entity.Result;
+import com.web.utils.AliyunOSSOperator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
 @RestController
 public class UploadController {
 
-    @PostMapping("/upload")
+    @Autowired
+    private AliyunOSSOperator aliyunOSSOperator;
+
+    //本地保存
+    /*@PostMapping("/upload")
     public Result uploadFile(String name, Integer age, MultipartFile file) throws Exception {
         log.info("接收的数据：{},{},{}", name, age, file);
 
@@ -42,5 +50,17 @@ public class UploadController {
         file.transferTo(filePath);
 
         return Result.success();
+    }*/
+
+    @PostMapping("/upload")
+    public Result upload(MultipartFile file) throws Exception {
+        log.info("文件上传：{}",file.getOriginalFilename());
+
+        //将文件存储到OSS
+        String url = aliyunOSSOperator.upload(file.getBytes(), Objects.requireNonNull(file.getOriginalFilename()));
+        log.info("文件上传后的url：{}",url);
+
+        return Result.success(url);
+
     }
 }

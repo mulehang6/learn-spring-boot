@@ -3,7 +3,6 @@ package com.web.controller;
 import com.web.entity.*;
 import com.web.service.EmpService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +28,7 @@ public class EmpController {
         return Result.success(pageResult);
     }*/
 
+    //分页查询
     @GetMapping
     public Result pageSelect(EmpQueryParam empQueryParam) {
         log.info("分页查询... {}",empQueryParam);
@@ -36,6 +36,7 @@ public class EmpController {
         return Result.success(pageResult);
     }
 
+    //添加员工
     @PostMapping
     public Result addEmp(@RequestBody Emp emp) {
         log.info("添加员工... {}",emp);
@@ -43,4 +44,31 @@ public class EmpController {
 
         return Result.success();
     }
+
+    //删除员工
+    @DeleteMapping
+    public Result delete(@RequestParam List<Integer> ids) {
+        log.info("删除员工：{}",ids);
+        empService.delete(ids);
+        return Result.success();
+    }
+
+    //根据id查询员工
+    @GetMapping("/{id}")
+    public Result getById(@PathVariable Integer id) {
+        log.info("获取员工的id: {}",id);
+        Emp emp = empService.getById(id);
+
+        return Result.success(emp);
+    }
+
+    //编辑员工信息
+    @PutMapping
+    public Result update(@RequestBody Emp emp) {
+        log.info("更新员工的数据：{}",emp);
+
+        empService.update(emp);
+        return Result.success();
+    }
+
 }

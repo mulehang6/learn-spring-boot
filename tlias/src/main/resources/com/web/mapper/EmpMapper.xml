@@ -3,6 +3,30 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.web.mapper.EmpMapper">
+    <!-- tlias/src/main/resources/com/web/mapper/EmpMapper.xml -->
+    <update id="update" parameterType="com.web.entity.Emp">
+        update emp
+        <set>
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="job != null and job != ''">job = #{job},</if>
+            <if test="salary != null">salary = #{salary},</if>
+            <if test="image != null and image != ''">image = #{image},</if>
+            <if test="entryDate != null">entry_date = #{entryDate},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="delete">
+        delete from emp where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
     <select id="list" resultType="com.web.entity.Emp">
         select e.*,d.name from emp e left join dept d on e.dept_id = d.id
             <where>
@@ -19,5 +43,44 @@
                 </if>
             </where>
         order by e.update_time desc
+    </select>
+
+<!--    手动封装查询结果集-->
+    <resultMap id="empResultMap" type="com.web.entity.Emp">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="name" property="name"/>
+        <result column="gender" property="gender"/>
+        <result column="phone" property="phone"/>
+        <result column="job" property="job"/>
+        <result column="salary" property="salary"/>
+        <result column="image" property="image"/>
+        <result column="entry_date" property="entryDate"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        
+<!--        封装工作经历-->
+        <collection property="exprList" ofType="com.web.entity.EmpExpr">
+            <id column="exprId" property="id"/>
+            <result column="exprEmpId" property="empId"/>
+            <result column="exprBegin" property="begin"/>
+            <result column="exprEnd" property="end"/>
+            <result column="exprCompany" property="company"/>
+            <result column="exprJob" property="job"/>
+        </collection>
+    </resultMap>
+
+    <select id="getById" resultMap="empResultMap">
+        select
+            e.*,
+            expr.id exprId,
+            expr.emp_id exprEmpId,
+            expr.begin exprBegin,
+            expr.end exprEnd,
+            expr.company exprCompany,
+            expr.job exprJob
+        from emp e left join emp_expr expr on e.id = expr.emp_id where e.id = #{id}
     </select>
 </mapper>

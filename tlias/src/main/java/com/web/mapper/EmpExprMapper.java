@@ -9,4 +9,6 @@ import java.util.List;
 public interface EmpExprMapper {
 
     void addExprs(List<EmpExpr> empExprs);
+
+    void delete(List<Integer> ids);
 }

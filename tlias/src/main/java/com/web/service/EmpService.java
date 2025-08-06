@@ -17,4 +17,9 @@ PageResult<Emp> pageSelect(EmpQueryParam empQueryParam);
     void addEmp(Emp emp);
 
 
+    void delete(List<Integer> ids);
+
+    Emp getById(Integer id);
+
+    void update(Emp emp);
 }
